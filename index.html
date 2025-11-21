@@ -9,33 +9,8 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #060b16;
+      background: #0a0f1a;
       color: #e6e6e6;
-    }
-
-    /* Fondo animado */
-    .bg-anim {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background: radial-gradient(circle, #0b162b, #060b16 80%);
-      overflow: hidden;
-    }
-    .bg-anim span {
-      position: absolute;
-      display: block;
-      width: 20px;
-      height: 20px;
-      background: rgba(0,150,255,0.2);
-      animation: move 10s linear infinite;
-      border-radius: 50%;
-    }
-    @keyframes move {
-      0% { transform: translateY(0) scale(1); }
-      100% { transform: translateY(-1200px) scale(0.2); }
     }
 
     header {
@@ -43,55 +18,44 @@
       padding: 20px;
       text-align: center;
       color: #4db8ff;
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: bold;
       border-bottom: 2px solid #1a3a66;
+      position: relative;
     }
 
-    /* Menú */
-    nav {
-      background: #0d1424;
-      padding: 10px;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      border-bottom: 1px solid #1d2f4d;
-    }
-    nav a {
-      color: #83c8ff;
+    /* --- CARRITO (NUEVO) --- */
+    **#carrito-btn {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      background: #4db8ff;
+      color: #000;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
       font-weight: bold;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-    nav a:hover {
-      color: #4db8ff;
-    }
+      cursor: pointer;
+    }**
 
-    /* Descripción */
+    **#carrito {
+      background: #111d33;
+      padding: 15px;
+      border-top: 2px solid #4db8ff;
+      display: none;
+    }**
+
+    **#carrito-lista p {
+      margin: 5px 0;
+    }**
+
     .descripcion {
       padding: 20px;
-      background: #0f1a2ecc;
-      backdrop-filter: blur(4px);
+      background: #0f1a2e;
       border-bottom: 2px solid #1a2d4d;
       line-height: 1.6;
     }
 
-    /* Buscador */
-    .search {
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
-    .search input {
-      width: 60%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-    }
-
-    /* Contenedor */
     .container {
       padding: 20px;
       display: grid;
@@ -99,19 +63,19 @@
       gap: 20px;
     }
 
-    /* Producto */
     .producto {
-      background: #111d33dd;
+      background: #111d33;
       padding: 15px;
       border-radius: 10px;
       border: 1px solid #1f3b66;
       transition: 0.3s;
-      backdrop-filter: blur(3px);
     }
+
     .producto:hover {
       transform: scale(1.03);
       border-color: #4db8ff;
     }
+
     .producto img {
       width: 100%;
       border-radius: 8px;
@@ -141,77 +105,137 @@
       cursor: pointer;
       transition: 0.25s;
     }
+
     button:hover {
       background: #80ccff;
     }
-
   </style>
 </head>
+
 <body>
 
-  <div class="bg-anim">
-    <span style="left:10%; animation-delay:0s;"></span>
-    <span style="left:30%; animation-delay:2s;"></span>
-    <span style="left:50%; animation-delay:4s;"></span>
-    <span style="left:70%; animation-delay:1s;"></span>
-    <span style="left:90%; animation-delay:3s;"></span>
-  </div>
+  <header>
+    Rainsek - Innovación Tecnológica Global
+    <!-- BOTÓN DE CARRITO (NUEVO) -->
+    **<button id="carrito-btn">Carrito (0)</button>**
+  </header>
 
-  <header>Rainsek - Innovación Tecnológica Global</header>
-
-  <nav>
-    <a href="#">Electrónica</a>
-    <a href="#">Videojuegos</a>
-    <a href="#">Bases de Datos</a>
-    <a href="#">Servicios</a>
-  </nav>
+  <!-- CARRITO VISIBLE AL HACER CLICK (NUEVO) -->
+  **<div id="carrito">
+    <h3>Carrito de Compras</h3>
+    <div id="carrito-lista"></div>
+    <p><strong>Total:</strong> <span id="carrito-total">0</span> COP</p>
+  </div>**
 
   <section class="descripcion">
     <h2>Sobre Rainsek</h2>
-    <p>Rainsek es una empresa multifilial orientada al mercado internacional que opera en tres áreas principales: electrónica, bases de datos y videojuegos...</p>
+    <p>
+      Rainsek es una empresa multifilial orientada al mercado internacional que opera en tres áreas principales: 
+      electrónica, bases de datos y videojuegos...
+    </p>
   </section>
 
-  <div class="search">
-    <input id="searchInput" type="text" placeholder="Buscar productos..." />
+  <div class="container">
+
+    <!-- PRODUCTOS INICIALES -->
+    <div class="producto">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Arduino_Uno_R3.jpg" alt="Arduino UNO" />
+      <div class="titulo-prod">Arduino UNO R3</div>
+      <div class="precio">45000</div>
+      **<button onclick="agregarAlCarrito('Arduino UNO R3', 45000)">Comprar</button>**
+    </div>
+
+    <div class="producto">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ethernet_Cable.jpg/640px-Ethernet_Cable.jpg" alt="Cable Ethernet" />
+      <div class="titulo-prod">Cable Ethernet 1m</div>
+      <div class="precio">8000</div>
+      **<button onclick="agregarAlCarrito('Cable Ethernet 1m', 8000)">Comprar</button>**
+    </div>
+
+    <div class="producto">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/LED_strip.jpg" alt="Tira LED" />
+      <div class="titulo-prod">Tira LED RGB 5m</div>
+      <div class="precio">22000</div>
+      **<button onclick="agregarAlCarrito('Tira LED RGB 5m', 22000)">Comprar</button>**
+    </div>
+
+    <div class="producto">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/59/SSD_Samsung_860_EVO.jpg" alt="SSD 500GB" />
+      <div class="titulo-prod">SSD 500GB</div>
+      <div class="precio">150000</div>
+      **<button onclick="agregarAlCarrito('SSD 500GB', 150000)">Comprar</button>**
+    </div>
+
+    <div class="producto">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Call_of_Duty_Black_Ops_Cold_War_Cover.jpg/640px-Call_of_Duty_Black_Ops_Cold_War_Cover.jpg" alt="Videojuego" />
+      <div class="titulo-prod">Call of Duty (Digital)</div>
+      <div class="precio">130000</div>
+      **<button onclick="agregarAlCarrito('Call of Duty (Digital)', 130000)">Comprar</button>**
+    </div>
+
+    <div class="producto">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Database-icon.svg" alt="Base de datos" />
+      <div class="titulo-prod">Base de Datos Corporativa</div>
+      <div class="precio">480000</div>
+      **<button onclick="agregarAlCarrito('Base de Datos Corporativa', 480000)">Comprar</button>**
+    </div>
+
+    <!-- 🔥 NUEVOS 3 PRODUCTOS (AÑADIDOS) 🔥 -->
+
+    **<div class="producto">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Raspberry_Pi_4_Model_B_-_Side.jpg" alt="Raspberry Pi 4" />
+      <div class="titulo-prod">Raspberry Pi 4</div>
+      <div class="precio">300000</div>
+      <button onclick="agregarAlCarrito('Raspberry Pi 4', 300000)">Comprar</button>
+    </div>**
+
+    **<div class="producto">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Gaming_mouse.jpg" alt="Mouse Gamer" />
+      <div class="titulo-prod">Mouse Gamer RGB</div>
+      <div class="precio">60000</div>
+      <button onclick="agregarAlCarrito('Mouse Gamer RGB', 60000)">Comprar</button>
+    </div>**
+
+    **<div class="producto">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/USB_flash_drive_transparent.png" alt="USB 64GB" />
+      <div class="titulo-prod">USB 64GB</div>
+      <div class="precio">25000</div>
+      <button onclick="agregarAlCarrito('USB 64GB', 25000)">Comprar</button>
+    </div>**
+
   </div>
 
-  <div class="container" id="productContainer">
-  </div>
+  <!-- SCRIPT DEL CARRITO (NUEVO) -->
+  **<script>
+    let carrito = [];
+    let total = 0;
 
-  <script>
-    const productos = [
-      { nombre: "Arduino UNO R3", precio: 45000, img: "https://upload.wikimedia.org/wikipedia/commons/3/31/Arduino_Uno_R3.jpg" },
-      { nombre: "Cable Ethernet 1m", precio: 8000, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ethernet_Cable.jpg/640px-Ethernet_Cable.jpg" },
-      { nombre: "Tira LED RGB 5m", precio: 22000, img: "https://upload.wikimedia.org/wikipedia/commons/8/8e/LED_strip.jpg" },
-      { nombre: "SSD 500GB", precio: 150000, img: "https://upload.wikimedia.org/wikipedia/commons/5/59/SSD_Samsung_860_EVO.jpg" },
-      { nombre: "Call of Duty (Digital)", precio: 130000, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Call_of_Duty_Black_Ops_Cold_War_Cover.jpg/640px-Call_of_Duty_Black_Ops_Cold_War_Cover.jpg" },
-      { nombre: "Base de Datos Corporativa", precio: 480000, img: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Database-icon.svg" }
-    ];
+    function agregarAlCarrito(nombre, precio) {
+      carrito.push({ nombre, precio });
+      total += precio;
 
-    const cont = document.getElementById("productContainer");
+      document.getElementById("carrito-total").innerText = total;
+      document.getElementById("carrito-btn").innerText = "Carrito (" + carrito.length + ")";
 
-    function render(lista) {
-      cont.innerHTML = "";
-      lista.forEach(p => {
-        cont.innerHTML += `
-          <div class='producto'>
-            <img src="${p.img}" />
-            <div class='titulo-prod'>${p.nombre}</div>
-            <div class='precio'>$${p.precio.toLocaleString()} COP</div>
-            <button>Comprar</button>
-          </div>
-        `;
+      actualizarCarrito();
+    }
+
+    function actualizarCarrito() {
+      let lista = document.getElementById("carrito-lista");
+      lista.innerHTML = "";
+
+      carrito.forEach(item => {
+        lista.innerHTML += "<p>" + item.nombre + " - " + item.precio + " COP</p>";
       });
     }
 
-    render(productos);
-
-    document.getElementById("searchInput").addEventListener("input", e => {
-      const val = e.target.value.toLowerCase();
-      const filtrado = productos.filter(p => p.nombre.toLowerCase().includes(val));
-      render(filtrado);
+    document.getElementById("carrito-btn").addEventListener("click", () => {
+      let carritoDiv = document.getElementById("carrito");
+      carritoDiv.style.display = carritoDiv.style.display === "none" ? "block" : "none";
     });
-  </script>
+  </script>**
 
 </body>
 </html>
+
+
