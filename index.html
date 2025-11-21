@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TiendaTech — Bases de datos y videojuegos</title>
+  <meta name="description" content="Venta de bases de datos: componentes electrónicos y videojuegos. Catálogo, búsqueda y contacto." />
+  <style>
+    /* Reset muy simple */
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --muted:#94a3b8; --glass: rgba(255,255,255,0.03);
+      --radius:12px; --maxw:1100px;
+      font-family: Inter, system-ui, Roboto, "Helvetica Neue", Arial;
+      color-scheme: dark;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071028 0%, #071521 100%); color:#e6eef6}
+    .container{max-width:var(--maxw);margin:32px auto;padding:20px}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#3b82f6);display:flex;align-items:center;justify-content:center;font-weight:700;color:#04202a}
+    h1{font-size:1.6rem;margin:0}
+    p.lead{margin:4px 0 0;color:var(--muted);font-size:0.95rem}
+
+    /* Hero / controls */
+    .controls{display:flex;gap:12px;align-items:center;margin:18px 0;flex-wrap:wrap}
+    .search{flex:1;min-width:200px;display:flex;background:var(--glass);padding:8px;border-radius:10px;align-items:center}
+    .search input{background:transparent;border:0;outline:none;color:inherit;font-size:0.95rem;padding:6px;width:100%}
+    select,button{padding:10px 12px;border-radius:10px;border:0;background:#071827;color:#e6eef6;font-weight:600}
+    .chip{background:#061221;padding:8px 10px;border-radius:999px;color:var(--muted);font-size:0.9rem}
+    button.primary{background:linear-gradient(90deg,var(--accent),#60a5fa);color:#04202a}
+
+    /* Grid */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:14px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:10px;min-height:200px}
+    .thumb{height:110px;border-radius:8px;background:#071e2a;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted);font-size:0.9rem}
+    .title{font-weight:700}
+    .meta{font-size:0.85rem;color:var(--muted)}
+    .price{margin-left:auto;font-weight:800}
+    .card-row{display:flex;align-items:center;gap:8px}
+    .btn{padding:8px 10px;border-radius:8px;border:0;cursor:pointer}
+    .btn.light{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+
+    /* modal */
+    .modal-bg{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:60}
+    .modal{background:linear-gradient(180deg,#071827,#061422);padding:18px;border-radius:14px;max-width:720px;width:100%;box-shadow:0 10px 30px rgba(2,6,23,0.7)}
+    .modal h3{margin:0 0 6px}
+    .modal .row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+    .modal .col{flex:1;min-width:220px}
+    .close{background:transparent;border:0;color:var(--muted);font-weight:700;cursor:pointer}
+
+    /* footer / form */
+    footer{margin-top:26px;padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .small{font-size:0.85rem;color:var(--muted)}
+
+    /* responsive */
+    @media (max-width:640px){
+      header{gap:10px}
+      .logo{width:52px;height:52px}
+      .container{padding:14px;margin:14px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <header>
+      <div class="logo">TT</div>
+      <div>
+        <h1>TiendaTech — Bases de datos & videojuegos</h1>
+        <p class="lead">Bases de datos de componentes electrónicos y catálogos de videojuegos listos para integración. Compra, descarga y soporte.</p>
+      </div>
+    </header>
+
+    <!-- Controles -->
+    <div class="controls" role="region" aria-label="Controles de búsqueda y filtro">
+      <div class="search" title="Buscar productos">
+        🔎 <input id="searchInput" type="search" placeholder="Buscar por nombre, referencia, tag..." />
+      </div>
+      <select id="categoryFilter" aria-label="Filtrar por categoría">
+        <option value="all">Todas las categorías</option>
+        <option value="componentes">Componentes electrónicos</option>
+        <option value="videojuegos">Videojuegos</option>
+        <option value="bundles">Bundles</option>
+      </select>
+      <div class="chip" id="itemsCount">0 productos</div>
+      <button class="primary" id="clearBtn">Limpiar</button>
+    </div>
+
+    <!-- Grid productos -->
+    <section class="grid" id="productsGrid" aria-live="polite"></section>
+
+    <!-- Modal detalle -->
+    <div class="modal-bg" id="modalBg" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h3 id="modalTitle">Detalle</h3>
+          <button class="close" id="closeModal">✕</button>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div id="modalThumb" style="height:160px;border-radius:8px;background:#071e2a;display:flex;align-items:center;justify-content:center;color:var(--muted)">IMAGEN</div>
+          </div>
+          <div class="col">
+            <p id="modalDesc" style="color:var(--muted);margin-top:4px"></p>
+            <p style="margin-top:10px"><strong>Formato:</strong> <span id="modalFormat">CSV / SQL / JSON</span></p>
+            <p><strong>Tamaño:</strong> <span id="modalSize">—</span> &nbsp; <strong>Registros:</strong> <span id="modalCount">—</span></p>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="btn primary" id="buyNowBtn">Comprar / Solicitar</button>
+              <button class="btn light" id="downloadDemoBtn">Demo / Vista previa</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer / Contacto -->
+    <footer>
+      <div>
+        <div style="font-weight:700">¿Necesitas un dataset personalizado?</div>
+        <div class="small">Rellena el formulario de contacto y te responderemos con un presupuesto.</div>
+      </div>
+
+      <form id="contactForm" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input name="name" placeholder="Nombre" required style="padding:8px 10px;border-radius:8px;border:0;background:#071227;color:inherit" />
+        <input name="email" type="email" placeholder="Correo" required style="padding:8px 10px;border-radius:8px;border:0;background:#071227;color:inherit" />
+        <input name="product" id="formProduct" placeholder="ID producto (opcional)" style="padding:8px 10px;border-radius:8px;border:0;background:#071227;color:inherit" />
+        <button class="primary" type="submit">Enviar mensaje</button>
+      </form>
+    </footer>
+
+  </div>
+
+  <script>
+    /* Datos de ejemplo: reemplaza/expande con tu catálogo real.
+       Cada producto: id, category, title, short, price, format, size, count, demoUrl
+     */
+    const products = [
+      {
+        id: "C-1001",
+        category: "componentes",
+        title: "Catálogo SMD - Resistencia / Condensador",
+        short: "Base de datos SMD con referencias, tolerancias y empaques.",
+        price: "USD 49",
+        format: "CSV / JSON",
+        size: "1.2 MB",
+        count: "18,200 registros",
+        demoUrl: "#"
+      },
+      {
+        id: "C-2008",
+        category: "componentes",
+        title: "ICs y Microcontroladores",
+        short: "Pinout, funciones, equivalencias y datasheet links.",
+        price: "USD 79",
+        format: "JSON / SQL",
+        size: "3.8 MB",
+        count: "9,450 registros",
+        demoUrl: "#"
+      },
+      {
+        id: "G-3005",
+        category: "videojuegos",
+        title: "Catálogo Retail - Juegos Retro",
+        short: "Metadatos: título, plataforma, género, región, estado.",
+        price: "USD 39",
+        format: "CSV",
+        size: "900 KB",
+        count: "4,200 registros",
+        demoUrl: "#"
+      },
+      {
+        id: "B-4001",
+        category: "bundles",
+        title: "Bundle: Componentes + Juegos (Start)",
+        short: "Paquete económico con 3 bases pequeños.",
+        price: "USD 99",
+        format: "ZIP (CSV/JSON)",
+        size: "6.4 MB",
+        count: "30,000 registros",
+        demoUrl: "#"
+      }
+    ];
+
+    // Referencias DOM
+    const grid = document.getElementById('productsGrid');
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const itemsCount = document.getElementById('itemsCount');
+    const clearBtn = document.getElementById('clearBtn');
+    const modalBg = document.getElementById('modalBg');
+    const closeModal = document.getElementById('closeModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalFormat = document.getElementById('modalFormat');
+    const modalSize = document.getElementById('modalSize');
+    const modalCount = document.getElementById('modalCount');
+    const modalThumb = document.getElementById('modalThumb');
+    const buyNowBtn = document.getElementById('buyNowBtn');
+    const downloadDemoBtn = document.getElementById('downloadDemoBtn');
+    const contactForm = document.getElementById('contactForm');
+    const formProduct = document.getElementById('formProduct');
+
+    // Render grid
+    function renderList(list){
+      grid.innerHTML = "";
+      if(!list.length){
+        grid.innerHTML = '<div style="grid-column:1/-1;padding:28px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);text-align:center;color:var(--muted)">No se encontraron productos.</div>';
+      }
+      list.forEach(p=>{
+        const el = document.createElement('article');
+        el.className = 'card';
+        el.innerHTML = `
+          <div class="thumb">${p.category.toUpperCase()}</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <div class="title">${escapeHtml(p.title)}</div>
+              <div class="meta">${escapeHtml(p.short)}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="price">${escapeHtml(p.price)}</div>
+              <div class="meta">${escapeHtml(p.format)}</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto">
+            <div class="meta">ID: ${escapeHtml(p.id)}</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn light" data-id="${p.id}" onclick="showDetails('${p.id}')">Ver</button>
+              <button class="btn primary" onclick="openPurchase('${p.id}')">Comprar</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(el);
+      });
+      itemsCount.textContent = `${list.length} producto${list.length !== 1 ? 's' : ''}`;
+    }
+
+    // Escape simple text for insertion
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m] });
+    }
+
+    // Filtro + búsqueda
+    function applyFilters(){
+      const q = searchInput.value.trim().toLowerCase();
+      const cat = categoryFilter.value;
+      const filtered = products.filter(p=>{
+        const matchCat = (cat === 'all') || p.category === cat;
+        const matchQ = !q || (p.title.toLowerCase().includes(q) || p.short.toLowerCase().includes(q) || p.id.toLowerCase().includes(q));
+        return matchCat && matchQ;
+      });
+      renderList(filtered);
+    }
+
+    // Show details modal
+    window.showDetails = function(id){
+      const p = products.find(x => x.id === id);
+      if(!p) return;
+      modalTitle.textContent = p.title;
+      modalDesc.textContent = p.short;
+      modalFormat.textContent = p.format;
+      modalSize.textContent = p.size;
+      modalCount.textContent = p.count;
+      modalThumb.textContent = p.id;
+      buyNowBtn.onclick = () => openPurchase(p.id);
+      downloadDemoBtn.onclick = () => {
+        // demo link: aquí podrías poner un URL real
+        if(p.demoUrl && p.demoUrl !== "#"){
+          window.open(p.demoUrl, "_blank");
+        } else {
+          alert("No hay demo pública disponible para este producto. Contacta para una vista previa.");
+        }
+      };
+      modalBg.style.display = 'flex';
+      modalBg.setAttribute('aria-hidden','false');
+      formProduct.value = p.id;
+    };
+
+    closeModal.onclick = function(){ modalBg.style.display = 'none'; modalBg.setAttribute('aria-hidden','true') };
+    modalBg.addEventListener('click', (e)=>{ if(e.target === modalBg) closeModal.onclick() });
+
+    // "Comprar" abre un mailto prellenado (sustituye por tu sistema de pago/checkout)
+    window.openPurchase = function(id){
+      const p = products.find(x => x.id === id);
+      const subject = encodeURIComponent(`Compra / Info: ${p ? p.title : id}`);
+      const body = encodeURIComponent(`Hola,\n\nEstoy interesado en: ${p ? p.title + " ("+p.id+")" : id}.\nPor favor envíenme detalles de pago y licencia.\n\nGracias.\n`);
+      const mail = 'ventas@tudominio.com'; // <-- Cambia por tu correo de ventas
+      window.location.href = `mailto:${mail}?subject=${subject}&body=${body}`;
+    };
+
+    // Eventos UI
+    searchInput.addEventListener('input', applyFilters);
+    categoryFilter.addEventListener('change', applyFilters);
+    clearBtn.addEventListener('click', ()=>{
+      searchInput.value = ""; categoryFilter.value = "all"; applyFilters();
+    });
+
+    // Formulario de contacto (envío simulado)
+    contactForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const form = new FormData(contactForm);
+      const name = form.get('name'), email = form.get('email'), product = form.get('product');
+      // Aquí podrías integrar POST a tu endpoint. Por ahora abrimos mailto:
+      const subj = encodeURIComponent(`Contacto TiendaTech - ${name}`);
+      const body = encodeURIComponent(`Nombre: ${name}\nEmail: ${email}\nProducto: ${product || 'N/A'}\n\nMensaje:\n`);
+      window.location.href = `mailto:ventas@tudominio.com?subject=${subj}&body=${body}`;
+    });
+
+    // Inicial
+    applyFilters();
+  </script>
+</body>
+</html>
