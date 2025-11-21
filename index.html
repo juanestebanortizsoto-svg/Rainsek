@@ -1,0 +1,52 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rainsek - Innovación Tecnológica</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+<h1>Rainsek</h1>
+<nav>
+<a href="#productos">Productos</a>
+<a href="#carrito">Carrito</a>
+</nav>
+</header>
+
+
+<section class="descripcion">
+Reinsek es una empresa multifilial orientada al mercado internacional que opera en tres áreas principales: electrónica, bases de datos y videojuegos. Comercializamos desde componentes básicos hasta productos tecnológicos avanzados, además de desarrollar soluciones electrónicas e informáticas personalizadas.
+</section>
+
+
+<section class="buscador">
+<input id="search" type="text" placeholder="Buscar...">
+<select id="category">
+<option value="all">Todas las categorías</option>
+<option value="electronica">Electrónica</option>
+<option value="datos">Bases de Datos</option>
+<option value="juegos">Videojuegos</option>
+</select>
+</section>
+
+
+<section id="productos" class="productos"></section>
+
+
+<div id="modal" class="modal">
+<div class="modal-content">
+<span class="close" onclick="closeModal()">×</span>
+<h2 id="modal-title"></h2>
+<img id="modal-img">
+<p id="modal-price"></p>
+<button onclick="addToCart()">Agregar al carrito</button>
+</div>
+</div>
+
+
+<script src="js/script.js"></script>
+</body>
+</html>
