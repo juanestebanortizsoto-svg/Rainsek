@@ -8,8 +8,11 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<header>
-<h1>Rainsek</h1>
+<canvas id="bg-canvas"></canvas>
+
+
+<header class="glass-header">
+<h1 class="logo">Rainsek</h1>
 <nav>
 <a href="#productos">Productos</a>
 <a href="#carrito">Carrito</a>
@@ -17,13 +20,13 @@
 </header>
 
 
-<section class="descripcion">
-Reinsek es una empresa multifilial orientada al mercado internacional que opera en tres áreas principales: electrónica, bases de datos y videojuegos. Comercializamos desde componentes básicos hasta productos tecnológicos avanzados, además de desarrollar soluciones electrónicas e informáticas personalizadas.
+<section class="descripcion glass-box">
+Reinsek es una empresa multifilial orientada al mercado internacional que opera en tres áreas principales: electrónica, bases de datos y videojuegos. Comercializamos componentes básicos, artefactos tecnológicos avanzados y soluciones informáticas. También desarrollamos videojuegos y distribuimos franquicias internacionales apoyándonos en nuestros servidores de alta disponibilidad en América.
 </section>
 
 
-<section class="buscador">
-<input id="search" type="text" placeholder="Buscar...">
+<section class="buscador glass-box">
+<input id="search" type="text" placeholder="Buscar producto..." />
 <select id="category">
 <option value="all">Todas las categorías</option>
 <option value="electronica">Electrónica</option>
@@ -37,12 +40,12 @@ Reinsek es una empresa multifilial orientada al mercado internacional que opera 
 
 
 <div id="modal" class="modal">
-<div class="modal-content">
+<div class="modal-content glass-box">
 <span class="close" onclick="closeModal()">×</span>
 <h2 id="modal-title"></h2>
-<img id="modal-img">
+<img id="modal-img" />
 <p id="modal-price"></p>
-<button onclick="addToCart()">Agregar al carrito</button>
+<button class="btn-add" onclick="addToCart()">Agregar al carrito</button>
 </div>
 </div>
 
