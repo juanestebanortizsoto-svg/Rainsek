@@ -3,238 +3,206 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rainsek - Tecnología, Bases de Datos, Electrónica y Videojuegos</title>
-
+  <title>Rainsek - Tecnología, Electrónica, Bases de Datos y Videojuegos</title>
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0a0f1a;
-      color: #e6e6e6;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #0a0f24, #111a40);
+      color: #fff;
+    }
+
+    /* Fondo animado */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://i.imgur.com/9a7nKZQ.png');
+      opacity: 0.08;
+      animation: move 40s linear infinite;
+      z-index: -1;
+    }
+    @keyframes move {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-1000px, -1000px); }
     }
 
     header {
-      background: linear-gradient(90deg, #0f1f3d, #08101f);
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(8px);
       padding: 20px;
       text-align: center;
-      color: #4db8ff;
       font-size: 2rem;
-      font-weight: bold;
-      border-bottom: 2px solid #1a3a66;
-      position: relative;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #00aaff;
     }
 
-    /* --- CARRITO (NUEVO) --- */
-    **#carrito-btn {
-      position: absolute;
-      right: 20px;
-      top: 20px;
-      background: #4db8ff;
-      color: #000;
-      padding: 8px 15px;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }**
-
-    **#carrito {
-      background: #111d33;
-      padding: 15px;
-      border-top: 2px solid #4db8ff;
-      display: none;
-    }**
-
-    **#carrito-lista p {
-      margin: 5px 0;
-    }**
-
-    .descripcion {
-      padding: 20px;
-      background: #0f1a2e;
-      border-bottom: 2px solid #1a2d4d;
-      line-height: 1.6;
-    }
-
-    .container {
-      padding: 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-    }
-
-    .producto {
-      background: #111d33;
-      padding: 15px;
-      border-radius: 10px;
-      border: 1px solid #1f3b66;
-      transition: 0.3s;
-    }
-
-    .producto:hover {
-      transform: scale(1.03);
-      border-color: #4db8ff;
-    }
-
-    .producto img {
-      width: 100%;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .titulo-prod {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #4db8ff;
-    }
-
-    .precio {
+    .description {
+      text-align: center;
+      width: 80%;
+      margin: 20px auto;
       font-size: 1.1rem;
-      margin-top: 5px;
+      line-height: 1.6;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 3px solid #00aaff;
+      border-right: 3px solid #00aaff;
     }
 
-    button {
-      width: 100%;
-      margin-top: 10px;
+    .filters {
+      margin: 20px auto;
+      width: 80%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    input, select {
       padding: 10px;
+      border-radius: 8px;
       border: none;
-      background: #4db8ff;
-      color: black;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.25s;
+      outline: none;
     }
 
-    button:hover {
-      background: #80ccff;
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      width: 85%;
+      margin: 30px auto;
+    }
+
+    .product {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 15px;
+      border-radius: 15px;
+      text-align: center;
+      transition: transform .2s;
+      border: 1px solid #00aaff44;
+    }
+    .product:hover {
+      transform: scale(1.05);
+      border-color: #00ddff;
+    }
+
+    .product img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      width: 400px;
+      background: #0d1533;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid #00aaff;
+    }
+
+    .close {
+      float: right;
+      cursor: pointer;
+      font-size: 20px;
+      color: #fff;
     }
   </style>
 </head>
-
 <body>
+<div class="bg-animation"></div>
 
-  <header>
-    Rainsek - Innovación Tecnológica Global
-    <!-- BOTÓN DE CARRITO (NUEVO) -->
-    **<button id="carrito-btn">Carrito (0)</button>**
-  </header>
+<header>Rainsek - Innovación Tecnológica Global</header>
 
-  <!-- CARRITO VISIBLE AL HACER CLICK (NUEVO) -->
-  **<div id="carrito">
-    <h3>Carrito de Compras</h3>
-    <div id="carrito-lista"></div>
-    <p><strong>Total:</strong> <span id="carrito-total">0</span> COP</p>
-  </div>**
+<section class="description">
+  Reinsek es una empresa multifilial orientada al mercado internacional que opera en tres áreas principales: electrónica, bases de datos y videojuegos.
+  Comercializamos desde componentes básicos hasta productos tecnológicos avanzados, además de desarrollar soluciones electrónicas e informáticas personalizadas.
+  Nuestra línea de bases de datos es el núcleo principal del negocio, ofreciendo servicios globales apoyados en servidores estratégicamente ubicados en América.
+  Finalmente, nuestra división de videojuegos distribuye títulos de múltiples desarrolladoras, además de crear franquicias y gestionar estudios asociados.
+</section>
 
-  <section class="descripcion">
-    <h2>Sobre Rainsek</h2>
-    <p>
-      Rainsek es una empresa multifilial orientada al mercado internacional que opera en tres áreas principales: 
-      electrónica, bases de datos y videojuegos...
-    </p>
-  </section>
+<section class="filters">
+  <input id="search" type="text" placeholder="Buscar productos..." />
+  <select id="category">
+    <option value="all">Todas las categorías</option>
+    <option value="electronica">Electrónica</option>
+    <option value="datos">Bases de Datos</option>
+    <option value="juegos">Videojuegos</option>
+  </select>
+</section>
 
-  <div class="container">
+<section class="products" id="product-list"></section>
 
-    <!-- PRODUCTOS INICIALES -->
-    <div class="producto">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Arduino_Uno_R3.jpg" alt="Arduino UNO" />
-      <div class="titulo-prod">Arduino UNO R3</div>
-      <div class="precio">45000</div>
-      **<button onclick="agregarAlCarrito('Arduino UNO R3', 45000)">Comprar</button>**
-    </div>
-
-    <div class="producto">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ethernet_Cable.jpg/640px-Ethernet_Cable.jpg" alt="Cable Ethernet" />
-      <div class="titulo-prod">Cable Ethernet 1m</div>
-      <div class="precio">8000</div>
-      **<button onclick="agregarAlCarrito('Cable Ethernet 1m', 8000)">Comprar</button>**
-    </div>
-
-    <div class="producto">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/LED_strip.jpg" alt="Tira LED" />
-      <div class="titulo-prod">Tira LED RGB 5m</div>
-      <div class="precio">22000</div>
-      **<button onclick="agregarAlCarrito('Tira LED RGB 5m', 22000)">Comprar</button>**
-    </div>
-
-    <div class="producto">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/59/SSD_Samsung_860_EVO.jpg" alt="SSD 500GB" />
-      <div class="titulo-prod">SSD 500GB</div>
-      <div class="precio">150000</div>
-      **<button onclick="agregarAlCarrito('SSD 500GB', 150000)">Comprar</button>**
-    </div>
-
-    <div class="producto">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Call_of_Duty_Black_Ops_Cold_War_Cover.jpg/640px-Call_of_Duty_Black_Ops_Cold_War_Cover.jpg" alt="Videojuego" />
-      <div class="titulo-prod">Call of Duty (Digital)</div>
-      <div class="precio">130000</div>
-      **<button onclick="agregarAlCarrito('Call of Duty (Digital)', 130000)">Comprar</button>**
-    </div>
-
-    <div class="producto">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Database-icon.svg" alt="Base de datos" />
-      <div class="titulo-prod">Base de Datos Corporativa</div>
-      <div class="precio">480000</div>
-      **<button onclick="agregarAlCarrito('Base de Datos Corporativa', 480000)">Comprar</button>**
-    </div>
-
-    <!-- 🔥 NUEVOS 3 PRODUCTOS (AÑADIDOS) 🔥 -->
-
-    **<div class="producto">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Raspberry_Pi_4_Model_B_-_Side.jpg" alt="Raspberry Pi 4" />
-      <div class="titulo-prod">Raspberry Pi 4</div>
-      <div class="precio">300000</div>
-      <button onclick="agregarAlCarrito('Raspberry Pi 4', 300000)">Comprar</button>
-    </div>**
-
-    **<div class="producto">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Gaming_mouse.jpg" alt="Mouse Gamer" />
-      <div class="titulo-prod">Mouse Gamer RGB</div>
-      <div class="precio">60000</div>
-      <button onclick="agregarAlCarrito('Mouse Gamer RGB', 60000)">Comprar</button>
-    </div>**
-
-    **<div class="producto">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/USB_flash_drive_transparent.png" alt="USB 64GB" />
-      <div class="titulo-prod">USB 64GB</div>
-      <div class="precio">25000</div>
-      <button onclick="agregarAlCarrito('USB 64GB', 25000)">Comprar</button>
-    </div>**
-
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">✖</span>
+    <h2 id="modal-title"></h2>
+    <img id="modal-img" style="width:100%;border-radius:10px;" />
+    <p id="modal-price"></p>
   </div>
+</div>
 
-  <!-- SCRIPT DEL CARRITO (NUEVO) -->
-  **<script>
-    let carrito = [];
-    let total = 0;
+<script>
+  const products = [
+    {name:'Arduino UNO R3',price:45000,category:'electronica',img:'https://i.imgur.com/d8KQYvS.jpeg'},
+    {name:'Cable USB Tipo C Reforzado',price:15000,category:'electronica',img:'https://i.imgur.com/MHv4uQc.jpeg'},
+    {name:'Base de Datos Empresarial Premium',price:250000,category:'datos',img:'https://i.imgur.com/fbhA2lx.jpeg'},
+    {name:'Paquete BD Marketing 5M Correos',price:120000,category:'datos',img:'https://i.imgur.com/lK8Ak09.jpeg'},
+    {name:'GTA V Premium Edition',price:60000,category:'juegos',img:'https://i.imgur.com/jLbRoSB.jpeg'},
+    {name:'Minecraft Java Edition',price:90000,category:'juegos',img:'https://i.imgur.com/AF2Gg8g.jpeg'}
+  ];
 
-    function agregarAlCarrito(nombre, precio) {
-      carrito.push({ nombre, precio });
-      total += precio;
+  function renderProducts(){
+    const search = document.getElementById('search').value.toLowerCase();
+    const category = document.getElementById('category').value;
+    const list = document.getElementById('product-list');
+    list.innerHTML = '';
 
-      document.getElementById("carrito-total").innerText = total;
-      document.getElementById("carrito-btn").innerText = "Carrito (" + carrito.length + ")";
-
-      actualizarCarrito();
-    }
-
-    function actualizarCarrito() {
-      let lista = document.getElementById("carrito-lista");
-      lista.innerHTML = "";
-
-      carrito.forEach(item => {
-        lista.innerHTML += "<p>" + item.nombre + " - " + item.precio + " COP</p>";
-      });
-    }
-
-    document.getElementById("carrito-btn").addEventListener("click", () => {
-      let carritoDiv = document.getElementById("carrito");
-      carritoDiv.style.display = carritoDiv.style.display === "none" ? "block" : "none";
+    products.filter(p => 
+      p.name.toLowerCase().includes(search) &&
+      (category === 'all' || p.category === category)
+    ).forEach(p => {
+      list.innerHTML += `
+        <div class="product" onclick="openModal('${p.name}','${p.img}',${p.price})">
+          <img src="${p.img}" />
+          <h3>${p.name}</h3>
+          <p><b>$${p.price.toLocaleString('es-CO')} COP</b></p>
+        </div>`;
     });
-  </script>**
+  }
 
+  renderProducts();
+
+  document.getElementById('search').addEventListener('keyup', renderProducts);
+  document.getElementById('category').addEventListener('change', renderProducts);
+
+  function openModal(name,img,price){
+    document.getElementById('modal-title').innerText = name;
+    document.getElementById('modal-img').src = img;
+    document.getElementById('modal-price').innerHTML = '<b>$'+price.toLocaleString('es-CO')+' COP</b>';
+    document.getElementById('modal').style.display = 'flex';
+  }
+
+  function closeModal(){
+    document.getElementById('modal').style.display = 'none';
+  }
+</script>
 </body>
 </html>
 
